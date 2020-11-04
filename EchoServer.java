@@ -40,6 +40,92 @@ public class EchoServer extends AbstractServer
   //Instance methods ************************************************
   
   /**
+   * This method handles any messages received from the server.
+   *
+   * @param msg The message received from the server.
+   */
+  public void handleMessageFromServerUI(String message) {
+    try
+    {
+      
+    	if(message.charAt(0)=='#') {
+    		message = message.substring(1,message.length());
+
+    		//Terminate server
+    		if(message.equals("quit")) {
+    			System.out.println("Quitting...");
+    			close();
+    		}
+
+    		//Server stops listening for new clients
+    		else if(message.equals("stop")){
+    			System.out.println("Stopped listening for new clients");
+    			stopListening();
+
+    		}
+    		
+    		//Close server
+    		else if(message.equals("close")){
+    			System.out.println("Closing Server...");
+    			stopListening();
+    			close();
+    			
+    		}
+
+    		//Sets the server port
+    		else if(message.startsWith("setport")){
+    			if(this.isListening()==true) {
+    				System.out.println("Command Denied: Server must be closed");
+    			} else {
+    				System.out.println("Setting port...");
+    				int newPort = Integer.parseInt(message.split(" ")[1]);
+    				try {
+    					setPort(newPort);
+    					System.out.println("New Port: " + newPort);
+    				}catch(Exception e){
+    					System.out.print("Unable to connect to Port: "+ newPort);
+    				}
+    			}
+    		}
+
+    		//starts the server
+    		else if(message.equals("start")){
+    			if(this.isListening()==false) {
+    				System.out.println("Command Denied: Server must be stopped");
+    			} else {
+    				System.out.println("Listening...");
+    				try {
+    					listen();
+    					System.out.println("Server Listening");
+    				}catch(IOException e) {
+    					System.out.println("Unable to listen");
+    				}
+    				//System.out.println("Logged in as: " + this.loginID);
+    			}
+    		}
+
+
+    		//Displays the current port number
+    		else if(message.equals("getport")){
+    			System.out.println("Current port number: "+Integer.toString(this.getPort()));
+    		}
+
+    		//If no valid command recognize
+    		else{
+    			System.out.println("Invalid Command");
+    		}
+    	}else {
+    		sendToAllClients(message);
+    	}
+    	
+    }
+    catch(IOException e)
+    {
+        System.out.println("Could not send message to clients");
+    }
+  }
+  
+  /**
    * This method handles any messages received from the client.
    *
    * @param msg The message received from the client.
@@ -72,6 +158,40 @@ public class EchoServer extends AbstractServer
       ("Server has stopped listening for connections.");
   }
   
+  /**
+   * Hook method called each time a new client connection is
+   * accepted. The default implementation does nothing.
+   * @param client the connection connected to the client.
+   */
+  @Override
+  protected void clientConnected(ConnectionToClient client) {
+	  System.out.println("New client connected to the server");
+  }
+  
+  /**
+   * Hook method called each time a client disconnects.
+   * The default implementation does nothing. The method
+   * may be overridden by subclasses but should remains synchronized.
+   *
+   * @param client the connection with the client.
+   */
+  @Override
+  synchronized protected void clientDisconnected(ConnectionToClient client) {
+	  System.out.println("Client disconnected from server");
+  }
+  
+  /**
+   * Hook method called each time an exception is thrown in a
+   * ConnectionToClient thread.
+   * The method may be overridden by subclasses but should remains
+   * synchronized.
+   *
+   * @param client the client that raised the exception.
+   * @param Throwable the exception thrown.
+   */
+  synchronized protected void clientException(ConnectionToClient client, Throwable exception) {
+	  System.out.println("Client disconnected form server");
+  }
   //Class methods ***************************************************
   
   /**

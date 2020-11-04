@@ -1,6 +1,3 @@
-// This file contains material supporting section 3.7 of the textbook:
-// "Object Oriented Software Engineering" and is issued under the open-source
-// license found at www.lloseng.com 
 
 import java.io.*;
 import java.util.Scanner;
@@ -8,37 +5,14 @@ import java.util.Scanner;
 import client.*;
 import common.*;
 
-/**
- * This class constructs the UI for a chat client.  It implements the
- * chat interface in order to activate the display() method.
- * Warning: Some of the code here is cloned in ServerConsole 
- *
- * @author Fran&ccedil;ois B&eacute;langer
- * @author Dr Timothy C. Lethbridge  
- * @author Dr Robert Lagani&egrave;re
- * @version September 2020
- */
-public class ClientConsole implements ChatIF 
+
+public class ServerConsole implements ChatIF 
 {
-  //Class variables *************************************************
-  
-  /**
-   * The default port to connect on.
-   */
+
   final public static int DEFAULT_PORT = 5555;
   
-  //Instance variables **********************************************
+  EchoServer server;
   
-  /**
-   * The instance of the client that created this ConsoleChat.
-   */
-  ChatClient client;
-  
-  
-  
-  /**
-   * Scanner to read from the console
-   */
   Scanner fromConsole; 
 
   
@@ -50,13 +24,14 @@ public class ClientConsole implements ChatIF
    * @param host The host to connect to.
    * @param port The port to connect on.
    */
-  public ClientConsole(String host, int port) 
+  public ServerConsole(int port) 
   {
     try 
     {
-      client= new ChatClient(host, port, this);
-      
-      
+    
+      server = new EchoServer(port);
+      server.listen();
+
     } 
     catch(IOException exception) 
     {
@@ -64,7 +39,6 @@ public class ClientConsole implements ChatIF
                 + " Terminating client.");
       System.exit(1);
     }
-    
     // Create scanner object to read from console
     fromConsole = new Scanner(System.in); 
   }
@@ -86,7 +60,8 @@ public class ClientConsole implements ChatIF
       while (true) 
       {
         message = fromConsole.nextLine();
-        client.handleMessageFromClientUI(message);
+        System.out.println("hefsdd");
+        server.handleMessageFromServerUI(message);
       }
     } 
     catch (Exception ex) 
@@ -104,7 +79,7 @@ public class ClientConsole implements ChatIF
    */
   public void display(String message) 
   {
-    System.out.println("> " + message);
+    System.out.println("SERVER MSG> " + message);
   }
 
   
@@ -117,21 +92,12 @@ public class ClientConsole implements ChatIF
    */
   public static void main(String[] args) 
   {
-    String host = "";
-    int port = DEFAULT_PORT;
 
-    try
-    {
-      host = args[0];
-    }
-    catch(ArrayIndexOutOfBoundsException e)
-    {
-      host = "localhost";
-    }
+    int port = DEFAULT_PORT;
     
     try
     {
-    	port = Integer.parseInt(args[1]);
+    	port = Integer.parseInt(args[0]);
     }
     catch(ArrayIndexOutOfBoundsException e)
     {
@@ -139,8 +105,8 @@ public class ClientConsole implements ChatIF
     }
     
     
-    ClientConsole chat= new ClientConsole(host, port);
-    chat.accept();  //Wait for console data
+    ServerConsole server= new ServerConsole(port);
+    server.accept();  //Wait for console data
   }
 }
 //End of ConsoleChat class
