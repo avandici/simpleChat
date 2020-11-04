@@ -13,7 +13,7 @@ public class ServerConsole implements ChatIF
   
   EchoServer server;
   
-  Scanner fromConsole; 
+  Scanner fromServerConsole; 
 
   
   //Constructors ****************************************************
@@ -24,23 +24,14 @@ public class ServerConsole implements ChatIF
    * @param host The host to connect to.
    * @param port The port to connect on.
    */
-  public ServerConsole(int port) 
+  public ServerConsole(EchoServer server) 
   {
-    try 
-    {
-    
-      server = new EchoServer(port);
-      server.listen();
 
-    } 
-    catch(IOException exception) 
-    {
-      System.out.println("Error: Can't setup connection!"
-                + " Terminating client.");
-      System.exit(1);
-    }
+	this.server = server;
+	this.fromServerConsole = new Scanner(System.in);
+    	
     // Create scanner object to read from console
-    fromConsole = new Scanner(System.in); 
+    fromServerConsole = new Scanner(System.in); 
   }
 
   
@@ -54,13 +45,11 @@ public class ServerConsole implements ChatIF
   {
     try
     {
-
       String message;
 
       while (true) 
       {
-        message = fromConsole.nextLine();
-        System.out.println("hefsdd");
+        message = fromServerConsole.nextLine();
         server.handleMessageFromServerUI(message);
       }
     } 
@@ -80,33 +69,6 @@ public class ServerConsole implements ChatIF
   public void display(String message) 
   {
     System.out.println("SERVER MSG> " + message);
-  }
-
-  
-  //Class methods ***************************************************
-  
-  /**
-   * This method is responsible for the creation of the Client UI.
-   *
-   * @param args[0] The host to connect to.
-   */
-  public static void main(String[] args) 
-  {
-
-    int port = DEFAULT_PORT;
-    
-    try
-    {
-    	port = Integer.parseInt(args[0]);
-    }
-    catch(ArrayIndexOutOfBoundsException e)
-    {
-    	port = DEFAULT_PORT;
-    }
-    
-    
-    ServerConsole server= new ServerConsole(port);
-    server.accept();  //Wait for console data
   }
 }
 //End of ConsoleChat class

@@ -154,7 +154,7 @@ public class ChatClient extends AbstractClient
     catch(IOException e)
     {
       clientUI.display
-        ("Could not send message to server.  Terminating client.");
+        ("> Could not send message to server.  Terminating client.");
       quit();
     }
   }
@@ -181,7 +181,7 @@ public class ChatClient extends AbstractClient
   	@Override
   	protected void connectionClosed()
   	{
-  		clientUI.display("Conection has closed");
+  		clientUI.display("> Conection has closed");
   	}
 
 	/**
@@ -194,7 +194,7 @@ public class ChatClient extends AbstractClient
 	 */
   	@Override
   	protected void connectionException(Exception exception) {
-  		clientUI.display("Server has closed");
+  		clientUI.display("> Server has closed");
   		quit();
 	}
 }

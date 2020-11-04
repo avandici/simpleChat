@@ -104,7 +104,7 @@ public class ClientConsole implements ChatIF
    */
   public void display(String message) 
   {
-    System.out.println("> " + message);
+    System.out.println(message);
   }
 
   
@@ -137,7 +137,6 @@ public class ClientConsole implements ChatIF
     {
     	port = DEFAULT_PORT;
     }
-    
     
     ClientConsole chat= new ClientConsole(host, port);
     chat.accept();  //Wait for console data

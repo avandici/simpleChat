@@ -47,7 +47,6 @@ public class EchoServer extends AbstractServer
   public void handleMessageFromServerUI(String message) {
     try
     {
-      
     	if(message.charAt(0)=='#') {
     		message = message.substring(1,message.length());
 
@@ -115,7 +114,7 @@ public class EchoServer extends AbstractServer
     			System.out.println("Invalid Command");
     		}
     	}else {
-    		sendToAllClients(message);
+    		sendToAllClients("FROM SERVER> "+message);
     	}
     	
     }
@@ -219,11 +218,14 @@ public class EchoServer extends AbstractServer
     try 
     {
       sv.listen(); //Start listening for connections
+      ServerConsole serverConsole = new ServerConsole(sv);
+      serverConsole.accept();
     } 
     catch (Exception ex) 
     {
       System.out.println("ERROR - Could not listen for clients!");
     }
+    
   }
 }
 //End of EchoServer class
